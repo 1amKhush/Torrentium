@@ -45,7 +45,7 @@ func NewHost(
 	onOffer func(offer, remotePeerID string, s network.Stream) (string, error),
 ) (host.Host, *dht.IpfsDHT, error) {
 
-	// 🔑 Identity key
+	//Identity key
 	priv, err := loadOrGeneratePrivateKey()
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to load/generate private key: %w", err)
@@ -57,8 +57,10 @@ func NewHost(
 		return nil, nil, fmt.Errorf("failed to parse listen address '%s': %w", listenAddr, err)
 	}
 
-	// 🌐 Relay config (static relay on Render)
-	relayAddrStr := "/dns4/relay-torrentium.onrender.com/tcp/443/wss/p2p/12D3KooWKsLZ7VmZTq7qBHj2cv4DczbEoNFLLDaLLk9ADVxDnqS6"
+	// Relay config (static relay on Render)
+	//relayAddrStr := "/dns4/relay-torrentium.onrender.com/tcp/443/wss/p2p/12D3KooWKsLZ7VmZTq7qBHj2cv4DczbEoNFLLDaLLk9ADVxDnqS6"
+	relayAddrStr := "/dns4/relay-torrentium.onrender.com/tcp/443/wss/p2p/12D3KooWNYq1ysd5ckTER82ULCj56Vg4red7BqFH8DABUZpxrYZ6"
+
 	relayMaddr, err := ma.NewMultiaddr(relayAddrStr)
 	if err != nil {
 		return nil, nil, fmt.Errorf("invalid relay multiaddr: %w", err)
@@ -68,7 +70,7 @@ func NewHost(
 		return nil, nil, fmt.Errorf("invalid relay peer info: %w", err)
 	}
 
-	// 🚀 Create host with relay + autorelay
+	//Create host with relay + autorelay
 	h, err := libp2p.New(
 		libp2p.Identity(priv),
 		libp2p.ListenAddrs(maddr),
@@ -80,19 +82,19 @@ func NewHost(
 		return nil, nil, fmt.Errorf("libp2p peer not initialized: %w", err)
 	}
 
-	// 🔌 Connect to relay
+	//Connect to relay
 	if err := h.Connect(ctx, *relayInfo); err != nil {
 		return nil, nil, fmt.Errorf("❌ Failed to connect to relay: %w", err)
 	}
 	log.Println("✅ Connected to relay")
 
-	// 🛂 Reserve relay slot
+	//Reserve relay slot
 	if err := reserveWithRelay(ctx, relayAddrStr, h); err != nil {
 		return nil, nil, fmt.Errorf("❌ Relay reservation failed: %w", err)
 	}
 	log.Println("✅ Relay reservation successful")
 
-	// 📒 DHT setup
+	//DHT setup
 	idht, err := dht.New(ctx, h)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to initialize DHT: %w", err)
@@ -101,7 +103,7 @@ func NewHost(
 		return nil, nil, fmt.Errorf("failed to bootstrap DHT: %w", err)
 	}
 
-	// 📨 Register WebRTC signaling protocol (your handler)
+	//Register WebRTC signaling protocol (your handler)
 	RegisterSignalingProtocol(h, onOffer)
 
 	log.Printf("✅ Host created with ID: %s", h.ID())
@@ -113,11 +115,8 @@ func NewHost(
 }
 
 func Bootstrap(ctx context.Context, h host.Host, d *dht.IpfsDHT) error {
-	// Updated bootstrap nodes with more reliable addresses
 	bootstrapNodes := []string{
 		// Official IPFS bootstrap nodes (mix of DNS and direct IP)
-		// "/dns4/relay-torrentium-9ztp.onrender.com/tcp/433/ws/p2p/12D3KooWDzR4XF65JtKrbQWG42QajS9ox2ptBwdRkQ7un6h7RAKQ",
-
 		"/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
 		"/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa",
 		"/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zp7VCk8JpNUQLoUPF3HfrDAQGS52a8",
@@ -156,17 +155,16 @@ func Bootstrap(ctx context.Context, h host.Host, d *dht.IpfsDHT) error {
 			continue
 		}
 
-		// Use shorter timeout for individual connections
 		connectCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
 		if err := h.Connect(connectCtx, *pi); err != nil {
-			log.Printf("Failed to connect to bootstrap node %s: %v", pi.ID, err)
+			//log.Printf("Failed to connect to bootstrap node %s: %v", pi.ID, err)
 		} else {
 			fmt.Printf("Connected to bootstrap node: %s\n", pi.ID)
 			connected++
 		}
 		cancel()
 
-		// Add small delay between connections to avoid overwhelming
+		// Added small delay between connections to avoid overwhelming
 		if i < len(bootstrapNodes)-1 {
 			time.Sleep(500 * time.Millisecond)
 		}

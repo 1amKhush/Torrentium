@@ -247,9 +247,14 @@ func (c *Client) commandLoop() {
 }
 
 func (c *Client) printInstructions() {
+	peerID := c.host.ID().String()
+	minWidth := len(" Your Peer ID: " + peerID) + 4 // 4 for border characters
 	width := 80
+	if minWidth > width {
+		width = minWidth + 10 
+	}
 	
-	// box
+	// Create the box
 	topBorder := "┌" + strings.Repeat("─", width-2) + "┐"
 	bottomBorder := "└" + strings.Repeat("─", width-2) + "┘"
 	
@@ -264,6 +269,7 @@ func (c *Client) printInstructions() {
 		return "│ " + leftPad + text + rightPad + " │"
 	}
 	
+	// Helper function to create a left-aligned line
 	leftLine := func(text string) string {
 		if len(text) >= width-4 {
 			return "│ " + text[:width-6] + "... │"
@@ -272,7 +278,7 @@ func (c *Client) printInstructions() {
 		return "│ " + text + rightPad + " │"
 	}
 	
-	// Print the box
+	// Print the fancy box
 	fmt.Println()
 	fmt.Println(topBorder)
 	fmt.Println(centerLine("DECENTRALIZED P2P FILE SHARING"))
@@ -303,10 +309,7 @@ func (c *Client) printInstructions() {
 	fmt.Println("│" + strings.Repeat("─", width-2) + "│")
 	
 	// Network info
-	peerID := c.host.ID().String()
-	if len(peerID) > 50 {
-		peerID = peerID[:47] + "..."
-	}
+	peerID = c.host.ID().String()
 	fmt.Println(leftLine(" Your Peer ID: " + peerID))
 	
 	// Show listening addresses

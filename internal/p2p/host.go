@@ -58,8 +58,7 @@ func NewHost(
 	}
 
 	// Relay config (static relay on Render)
-	//relayAddrStr := "/dns4/relay-torrentium.onrender.com/tcp/443/wss/p2p/12D3KooWKsLZ7VmZTq7qBHj2cv4DczbEoNFLLDaLLk9ADVxDnqS6"
-	relayAddrStr := "/dns4/relay-torrentium.onrender.com/tcp/443/wss/p2p/12D3KooWNYq1ysd5ckTER82ULCj56Vg4red7BqFH8DABUZpxrYZ6"
+	relayAddrStr := "/dns4/relay-torrentium.onrender.com/tcp/443/wss/p2p/12D3KooWS7jchAU23xcSYasitheTvTyBpjSx4KuRgj5rv5GBBYoB"
 
 	relayMaddr, err := ma.NewMultiaddr(relayAddrStr)
 	if err != nil {

@@ -58,7 +58,7 @@ func NewHost(
 	}
 
 	// 🌐 Relay config (static relay on Render)
-	relayAddrStr := "/dns4/relay-torrentium-9ztp.onrender.com/tcp/443/wss/p2p/12D3KooWCP28CB5csS5VAFkFFHi5uDQhVmDa6EisV9vGLAwrJrhK"
+	relayAddrStr := "/dns4/relay-torrentium-658196153893.asia-south2.run.app/tcp/443/wss/p2p/12D3KooWKgQGw4xpWNgZHwZhbFvdaWVivRBYm5BQjZRGSDemgUnJ"
 	relayMaddr, err := ma.NewMultiaddr(relayAddrStr)
 	if err != nil {
 		return nil, nil, fmt.Errorf("invalid relay multiaddr: %w", err)
@@ -112,9 +112,6 @@ func NewHost(
 	return h, idht, nil
 }
 
-// Add these improvements to your main function and Client struct
-// domian name of relays ==>  https://relay-torrentium-9ztp.onrender.com
-// Improved bootstrapping function
 func Bootstrap(ctx context.Context, h host.Host, d *dht.IpfsDHT) error {
 	// Updated bootstrap nodes with more reliable addresses
 	bootstrapNodes := []string{

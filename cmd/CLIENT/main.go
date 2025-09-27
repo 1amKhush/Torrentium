@@ -375,18 +375,18 @@ func (c *Client) performNetworkDiagnostics() {
 	}
 
 	if hasLocalAddr {
-		fmt.Println("✅ Local network addresses detected - optimized for same-network connections")
+		fmt.Println("Local network addresses detected - optimized for same-network connections")
 	} else {
-		fmt.Println("ℹ  No local network addresses detected")
+		fmt.Println("No local network addresses detected")
 	}
 
 	// Test ICE connectivity
 	fmt.Println("\nTesting ICE connectivity...")
 	if err := webRTC.TestICEConnectivity(); err != nil {
-		fmt.Printf("❌ ICE connectivity test failed: %v\n", err)
+		fmt.Printf("ICE connectivity test failed: %v\n", err)
 		fmt.Println("This indicates potential WebRTC connection issues")
 	} else {
-		fmt.Println("✅ ICE connectivity test passed")
+		fmt.Println("ICE connectivity test passed")
 	}
 
 	// Check libp2p connectivity
@@ -404,7 +404,7 @@ func (c *Client) performNetworkDiagnostics() {
 				remoteAddr := conn[0].RemoteMultiaddr().String()
 				fmt.Printf(" - %s (%s)\n", peerID, remoteAddr)
 				if strings.Contains(remoteAddr, "192.168.") || strings.Contains(remoteAddr, "10.") || strings.Contains(remoteAddr, "172.") {
-					fmt.Printf("   ✅ Local network peer\n")
+					fmt.Printf("Local network peer\n")
 				}
 			}
 		}
@@ -414,7 +414,7 @@ func (c *Client) performNetworkDiagnostics() {
 	routingTableSize := c.dht.RoutingTable().Size()
 	fmt.Printf("\nDHT routing table size: %d\n", routingTableSize)
 
-	fmt.Println("\n💡 For same-network connections:")
+	fmt.Println("\nFor same-network connections:")
 	fmt.Println("   1. Make sure both peers are connected to libp2p first")
 	fmt.Println("   2. WebRTC should work directly without TURN servers")
 	fmt.Println("   3. Use 'peers' command to see connected peers")
@@ -433,7 +433,7 @@ func (c *Client) performLocalWebRTCTest() {
 		// No-op for this test
 	})
 	if err != nil {
-		fmt.Printf("❌ Failed to create test WebRTC peer: %v\n", err)
+		fmt.Printf("Failed to create test WebRTC peer: %v\n", err)
 		return
 	}
 	defer testPeer.Close()
@@ -441,17 +441,17 @@ func (c *Client) performLocalWebRTCTest() {
 	// Try to create an offer to test the process
 	offer, err := testPeer.CreateOffer()
 	if err != nil {
-		fmt.Printf("❌ Failed to create WebRTC offer: %v\n", err)
+		fmt.Printf("Failed to create WebRTC offer: %v\n", err)
 		return
 	}
 
-	fmt.Printf("✅ WebRTC offer created successfully (length: %d chars)\n", len(offer))
+	fmt.Printf("WebRTC offer created successfully (length: %d chars)\n", len(offer))
 
 	// Try to wait for ICE gathering
 	fmt.Println("Waiting 5 seconds for ICE candidate gathering...")
 	time.Sleep(5 * time.Second)
 
-	fmt.Println("✅ Local WebRTC test completed - basic functionality working")
+	fmt.Println("Local WebRTC test completed - basic functionality working")
 	fmt.Println("If downloads still fail, the issue is likely in the peer-to-peer signaling")
 }
 
@@ -925,11 +925,9 @@ func (c *Client) initiateWebRTCConnectionWithRetry(targetPeerID peer.ID, maxRetr
 	var lastErr error
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		if attempt > 1 {
-			log.Printf("debug 1.1")
 			backoff := time.Duration(1<<uint(attempt-1)) * time.Second
 			fmt.Printf("Retrying in %v (attempt %d/%d)...\n", backoff, attempt, maxRetries)
 			time.Sleep(backoff)
-			log.Printf("debug 2")
 		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -945,15 +943,12 @@ func (c *Client) initiateWebRTCConnectionWithRetry(targetPeerID peer.ID, maxRetr
 		}
 
 		if len(info.Addrs) == 0 {
-			log.Printf("debug 5")
 			lastErr = fmt.Errorf("peer %s has no known multiaddrs", targetPeerID)
 			continue
 		}
 
 		c.host.Peerstore().AddAddrs(info.ID, info.Addrs, time.Hour)
-		fmt.Println("relay ddebugging 1")
 		fmt.Println(c.host.Peerstore())
-		fmt.Println("relays debugging 2")
 
 		if c.host.Network().Connectedness(info.ID) != network.Connected {
 			connectCtx, connectCancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -1370,10 +1365,6 @@ func (c *Client) onWebRTCPeerClose(peerID peer.ID) {
 			}
 		}
 	}
-}
-
-func (c *Client) handleFileRequest(ctx context.Context, ctrl controlMessage, peer *webRTC.SimpleWebRTCPeer) {
-	log.Printf("Note: handleFileRequest is deprecated in favor of piece-based transfers.")
 }
 
 func min64(a, b int64) int64 {

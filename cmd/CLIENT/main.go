@@ -11,10 +11,10 @@ import (
 	"syscall"
 
 	// Import the new client library
-	"torrentium/internal/torrentium_client"
+	"github.com/1amkhush/torrentium/pkg/torrentium_client"
 
-	db "torrentium/internal/db"
-	p2p "torrentium/internal/p2p"
+	db "github.com/1amkhush/torrentium/pkg/db"
+	p2p "github.com/1amkhush/torrentium/pkg/p2p"
 
 	//"github.com/joho/godotenv"
 	"github.com/libp2p/go-libp2p/core/host"

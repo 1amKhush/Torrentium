@@ -1,4 +1,4 @@
-module torrentium
+module github.com/1amkhush/torrentium
 
 go 1.23.10
 

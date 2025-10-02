@@ -16,9 +16,9 @@ import (
 	"syscall"
 	"time"
 
-	webRTC "torrentium/internal/client"
-	db "torrentium/internal/db"
-	p2p "torrentium/internal/p2p"
+	webRTC "github.com/1amkhush/torrentium/pkg/client"
+	db "github.com/1amkhush/torrentium/pkg/db"
+	p2p "github.com/1amkhush/torrentium/pkg/p2p"
 
 	"github.com/dustin/go-humanize"
 	"github.com/ipfs/go-cid"
@@ -248,16 +248,16 @@ func (c *Client) commandLoop() {
 
 func (c *Client) printInstructions() {
 	peerID := c.host.ID().String()
-	minWidth := len(" Your Peer ID: " + peerID) + 4 // 4 for border characters
+	minWidth := len(" Your Peer ID: "+peerID) + 4 // 4 for border characters
 	width := 80
 	if minWidth > width {
-		width = minWidth + 10 
+		width = minWidth + 10
 	}
-	
+
 	// Create the box
 	topBorder := "┌" + strings.Repeat("─", width-2) + "┐"
 	bottomBorder := "└" + strings.Repeat("─", width-2) + "┘"
-	
+
 	// Helper function to create a centered line
 	centerLine := func(text string) string {
 		if len(text) >= width-4 {
@@ -268,7 +268,7 @@ func (c *Client) printInstructions() {
 		rightPad := strings.Repeat(" ", width-4-len(text)-padding)
 		return "│ " + leftPad + text + rightPad + " │"
 	}
-	
+
 	// Helper function to create a left-aligned line
 	leftLine := func(text string) string {
 		if len(text) >= width-4 {
@@ -277,7 +277,7 @@ func (c *Client) printInstructions() {
 		rightPad := strings.Repeat(" ", width-4-len(text))
 		return "│ " + text + rightPad + " │"
 	}
-	
+
 	// Print the fancy box
 	fmt.Println()
 	fmt.Println(topBorder)
@@ -285,7 +285,7 @@ func (c *Client) printInstructions() {
 	fmt.Println("│" + strings.Repeat("─", width-2) + "│")
 	fmt.Println(centerLine("Available Commands"))
 	fmt.Println("│" + strings.Repeat(" ", width-2) + "│")
-	
+
 	// Commands with descriptions
 	commands := [][]string{
 		{"add <path>", "Share a file on the network"},
@@ -299,23 +299,23 @@ func (c *Client) printInstructions() {
 		{"help", "Show this help"},
 		{"exit", "Exit the application"},
 	}
-	
+
 	for _, cmd := range commands {
 		cmdText := fmt.Sprintf(" %-20s - %s", cmd[0], cmd[1])
 		fmt.Println(leftLine(cmdText))
 	}
-	
+
 	fmt.Println("│" + strings.Repeat(" ", width-2) + "│")
 	fmt.Println("│" + strings.Repeat("─", width-2) + "│")
-	
+
 	// Network info
 	peerID = c.host.ID().String()
 	fmt.Println(leftLine(" Your Peer ID: " + peerID))
-	
+
 	// Show listening addresses
 	addrs := c.host.Addrs()
 	fmt.Println(leftLine(" Listening on:"))
-	
+
 	for i, addr := range addrs {
 		if i >= 3 { // Limit to 3 addresses to fit in box
 			moreAddrs := len(addrs) - 3
@@ -328,7 +328,7 @@ func (c *Client) printInstructions() {
 		}
 		fmt.Println(leftLine("   " + addrStr))
 	}
-	
+
 	fmt.Println(bottomBorder)
 	fmt.Println()
 }
@@ -805,7 +805,7 @@ func (c *Client) downloadChunksFromPeer(peer *webRTC.SimpleWebRTCPeer, state *Do
 			Index:   int64(i),
 		}
 
-		state.mu.Lock()   //piece timeout
+		state.mu.Lock() //piece timeout
 		state.pieceTimers[i] = time.AfterFunc(PieceTimeout, func() {
 			log.Printf("Piece %d timed out, re-requesting...", i)
 			c.reRequestPiece(state, i)

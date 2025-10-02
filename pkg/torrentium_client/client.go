@@ -655,7 +655,7 @@ func (c *Client) DownloadFile(cidStr string) error {
 	}
 
 	fmt.Printf("Found %d providers. Getting file manifest...\n", len(providers))
-	relayAddrStr := "/dns4/relay-torrentium.onrender.com/tcp/443/wss/p2p/12D3KooWFXonBdojNuWoe155fAAPjdhqKbL3n2K6i5vW13kgBx9a"
+	relayAddrStr := "/dns4/relay-torrentium-pj9h.onrender.com/tcp/443/wss/p2p/12D3KooWFXonBdojNuWoe155fAAPjdhqKbL3n2K6i5vW13kgBx9a"
 
 	var manifest controlMessage
 	var firstPeer *webRTC.SimpleWebRTCPeer
